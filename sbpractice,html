@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SpellingBee</title>
+	<meta charset="UTF-8">
+</head>
+<body>
+	<label for="text-input">Press below to get a word, wait till I say GO!:</label><hr/>
+	<button id="speak-btn">Ask Spelling</button><hr/>
+	<textarea id="text-input" rows="4" cols="50"></textarea>
+	<!--<button id="speak2-btn">Readout</button>-->
+	<script>
+	let myArray = ["apple", "banana", "orange", "mango"];
+ // remove the element at index 2
+let currentWord ="";
+		// Check for browser support
+		if ('speechSynthesis' in window) {
+			const speakBtn = document.getElementById('speak-btn');
+			const textInput = document.getElementById('text-input');
+			const synth = window.speechSynthesis;
+
+					const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+		const recognition = new SpeechRecognition();
+		
+			// Create a new SpeechSynthesisUtterance object
+			const utterance = new SpeechSynthesisUtterance();
+
+			// Set default values for the utterance
+			utterance.voice = synth.getVoices()[0]; // Use the first available voice
+			utterance.rate = 1.0; // Speaking rate
+			utterance.pitch = 1.0; // Speaking pitch
+			
+			const utterance2 = new SpeechSynthesisUtterance();
+			utterance.voice = synth.getVoices()[2]; // Use the first available voice
+			utterance.rate = 1.0; // Speaking rate
+			utterance.pitch = 1.0; // Speaking pitch
+			
+			// Event listener for the Speak button
+			speakBtn.addEventListener('click', () => {
+				var a= myArray.splice(0, 1);
+				currentWord = a;
+				utterance.text = a;
+				//textInput.value; // Set the text to speak
+				synth.speak(utterance); // Speak the text
+				setTimeout(function() {
+					  console.log("Hello, world!");
+					}, 5000); // wait for 1 second (1000 milliseconds)
+				utterance2.text = "GO";
+				synth.speak(utterance2); 
+				recognition.start();
+				recognition.timeout = 5000; // 5 seconds
+			});
+			
+			recognition.onresult = function(event) {
+					const transcript = event.results[0][0].transcript;
+					//result.innerHTML = transcript;
+					let usaid = transcript.toLowerCase().replace("capital","").replace("lower","").replace("case","").replace("small","").split(" ").join("");
+					//alert(currentWord + "  " +usaid);
+					let s1=currentWord.toString().toLowerCase();
+					document.getElementById('text-input').value = "Word was : " + s1 + " , you said " + usaid;
+					if(s1 === usaid)
+					{
+						utterance2.text = "CORRECT!";
+						synth.speak(utterance2);
+					}
+					else
+					{
+						utterance2.text = "INCORRECT!";
+						synth.speak(utterance2);
+					}
+					
+				};
+			// Event listener for the Speak button
+			/*speakBtn.addEventListener('click', () => {
+				utterance.text = textInput.value; // Set the text to speak
+				synth.speak(utterance); // Speak the text
+			});*/
+		} else {
+			alert('Sorry, your browser does not support the Web Speech API.');
+		}
+		/*
+		const word = "example";
+
+		const utterance2 = new SpeechSynthesisUtterance();
+		utterance2.rate = 0.9; // adjust the speaking rate
+		utterance2.pitch = 1.5; // adjust the pitch of the voice
+		utterance2.text = `The spelling of ${word} is ${word.split("").join(" ")}`;
+
+window.speechSynthesis.speak(utterance2);*/
+	</script>
+</body>
+</html>
